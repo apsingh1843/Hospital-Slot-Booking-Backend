@@ -8,5 +8,6 @@ urlpatterns = [
     path('api/bookings/', views.BookingView.as_view(), name="bookings"),
     path('api/activate/', views.slotActivate, name="activate"),
     path('api/deactivate/', views.slotDeactivate, name="deactivate"),
-    path('api/cancel/', views.cancelBooking, name="cancel"),
+    path('api/reqcancel/', views.reqCancelBooking, name="reqcancel"),
+    path('api/rescancel/', views.resCancelBooking, name="rescancel"),
 ]

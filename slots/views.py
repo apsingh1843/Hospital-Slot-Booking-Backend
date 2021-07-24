@@ -103,10 +103,10 @@ def slotDeactivate(request):
         return Response('This slot is already deactivated.', status=status.HTTP_400_BAD_REQUEST)
 
 
-# cancel booking
+# request cancel booking
 @csrf_exempt
 @api_view(['POST'])
-def cancelBooking(request):
+def reqCancelBooking(request):
     data = json.loads(request.body)
     bookingId = data['id']
     booking = Bookings.objects.get(id=bookingId)
@@ -116,13 +116,41 @@ def cancelBooking(request):
             return Response('This booking cannot be cancelled as it is already completed.', status=status.HTTP_400_BAD_REQUEST)
 
         else:
-            if booking.isCancelled:
+            if booking.requestCancel == 'AC':
                 return Response('This booking is already cancelled.', status=status.HTTP_400_BAD_REQUEST)
 
+            elif booking.requestCancel == 'DE':
+                return Response('Your request for cancelling this booking was declined earlier.', status=status.HTTP_400_BAD_REQUEST)
+
+            elif booking.requestCancel == 'RE':
+                return Response('You have already requested earlier.Please wait for response.', status=status.HTTP_400_BAD_REQUEST)
+
             else:
-                booking.isCancelled = True
+                booking.requestCancel = 'RE'
                 booking.save()
-                return Response('Booking Cancelled.', status=status.HTTP_201_CREATED)
+                return Response('Request for cancelling this booking is sent. Please wait for response.', status=status.HTTP_201_CREATED)
+
+    else:
+        return Response('Booking does not exist.', status=status.HTTP_400_BAD_REQUEST)
+
+
+# response cancel booking
+@csrf_exempt
+@api_view(['POST'])
+def resCancelBooking(request):
+    data = json.loads(request.body)
+    bookingId = data['id']
+    resType = data['type']
+    booking = Bookings.objects.get(id=bookingId)
+
+    if booking:
+        if booking.isCompleted:
+            return Response('This booking is already completed.', status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            booking.requestCancel = resType
+            booking.save()
+            return Response('Response sent.', status=status.HTTP_201_CREATED)
 
     else:
         return Response('Booking does not exist.', status=status.HTTP_400_BAD_REQUEST)

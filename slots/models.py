@@ -13,8 +13,19 @@ class Slots(models.Model):
     def __str__(self):
         return str(self.name)
 
+    class Meta:
+        ordering = ['startTime']
+
 
 class Bookings(models.Model):
+
+    REQUEST_CHOICES = (
+        ('NO', 'Not Requested'),
+        ('RE', 'Requested'),
+        ('AC', 'Accepted'),
+        ('DE', 'Declined'),
+    )
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     slotId = models.CharField(max_length=1000, blank=False, null=False)
     patientName = models.CharField(max_length=100, blank=False, null=False)
@@ -24,7 +35,8 @@ class Bookings(models.Model):
     description = models.TextField(blank=True, null=True)
     bookingTime = models.DateTimeField(auto_now_add=True)
     isCompleted = models.BooleanField(default=False)
-    isCancelled = models.BooleanField(default=False)
+    requestCancel = models.CharField(max_length=50, choices=REQUEST_CHOICES, default='NO')
+    message = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return str(self.patientName)
