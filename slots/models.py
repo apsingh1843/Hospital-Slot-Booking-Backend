@@ -1,5 +1,6 @@
 from django.db import models
 import uuid
+from django.contrib.auth.models import User
 
 
 class Slots(models.Model):
@@ -28,6 +29,9 @@ class Bookings(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     slotId = models.CharField(max_length=1000, blank=False, null=False)
+    slotName = models.CharField(max_length=50, null=True)
+    slotTime = models.CharField(max_length=200, null=True)
+    bookedBy = models.ForeignKey(User, related_name="bookings", on_delete=models.CASCADE, null=True)
     patientName = models.CharField(max_length=100, blank=False, null=False)
     bearerName = models.CharField(max_length=100, blank=False, null=False)
     patientAge = models.IntegerField(null=False, blank=False)
@@ -42,4 +46,4 @@ class Bookings(models.Model):
         return str(self.patientName)
 
     class Meta:
-        ordering = ['bookingTime']
+        ordering = ['-bookingTime']
