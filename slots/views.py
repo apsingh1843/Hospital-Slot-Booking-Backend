@@ -66,10 +66,10 @@ class BookingView(APIView):
             else:
                 serializer = BookingsSerializer(data=request.data)
                 if serializer.is_valid():
-                    serializer.save(bookedBy=self.request.user)
+                    serializer.save()
                     slot.isBooked = True
                     slot.save()
-                    return Response({'msg': 'Successfully booked slot.'}, 
+                    return Response({'msg': 'Successfully booked slot.'},
                     status=status.HTTP_201_CREATED)
                 else:
                     print('error', serializer.errors)
@@ -168,7 +168,7 @@ def reqCancelBooking(request):
 def resCancelBooking(request):
     data = json.loads(request.body)
     bookingId = data['id']
-    resType = data['type']
+    resType = data['resType']
     resMsg = data['resMsg']
 
     booking = Bookings.objects.get(id=bookingId)
@@ -190,6 +190,36 @@ def resCancelBooking(request):
 
             if resType == 'DE':
                 booking.message = resMsg
+
+            booking.save()
+            slot.save()
+            return Response({'msg': 'Response sent.'}, status=status.HTTP_200_OK)
+
+    else:
+        return Response({'msg': 'Booking does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# mark booking as completed
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def markCompleted(request):
+    data = json.loads(request.body)
+    bookingId = data['id']
+
+    booking = Bookings.objects.get(id=bookingId)
+    slotId = booking.slotId
+    slot = Slots.objects.get(id=slotId)
+
+    if booking:
+        if booking.isCompleted:
+            return Response({'msg': 'This booking is already completed.'},
+            status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            booking.isCompleted = True
+            slot.isActive = False
+            slot.isBooked = False
 
             booking.save()
             slot.save()

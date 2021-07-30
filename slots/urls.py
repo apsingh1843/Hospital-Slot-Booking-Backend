@@ -10,4 +10,5 @@ urlpatterns = [
     path('api/deactivate/', views.slotDeactivate, name="deactivate"),
     path('api/reqcancel/', views.reqCancelBooking, name="reqcancel"),
     path('api/rescancel/', views.resCancelBooking, name="rescancel"),
+    path('api/completed/', views.markCompleted, name="completed"),
 ]

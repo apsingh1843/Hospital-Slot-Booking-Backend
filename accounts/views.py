@@ -24,7 +24,6 @@ class RegisterUserView(generics.GenericAPIView):
                     return Response({
                         "user": UserSerializer(user, context=self.get_serializer_context()).data,
                         "token": AuthToken.objects.create(user)[1],
-                        "msg": "Successfully Registered!"
                     })
 
                 else:
@@ -32,10 +31,10 @@ class RegisterUserView(generics.GenericAPIView):
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             else:
-                return Response({"msg": "This email is already registered."})
+                return Response({"msg": "This email is already registered."}, status=status.HTTP_400_BAD_REQUEST)
 
         else:
-            return Response({"msg": "Username exists.Please try another."})
+            return Response({"msg": "Username exists.Please try another."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Login
