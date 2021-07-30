@@ -39,7 +39,6 @@ class RegisterUserView(generics.GenericAPIView):
 
 # Login
 class LoginUserView(generics.GenericAPIView):
-    permission_classes = (permissions.AllowAny, )
     serializer_class = LoginSerializer
 
     def post(self, request, *args, **kwargs):
@@ -49,7 +48,6 @@ class LoginUserView(generics.GenericAPIView):
             return Response({
               "user": UserSerializer(user, context=self.get_serializer_context()).data,
               "token": AuthToken.objects.create(user)[1],
-              "msg": "Successfully Logged In!"
             })
 
         else:
