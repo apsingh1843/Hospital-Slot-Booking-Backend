@@ -66,7 +66,7 @@ class BookingView(APIView):
             else:
                 serializer = BookingsSerializer(data=request.data)
                 if serializer.is_valid():
-                    serializer.save()
+                    serializer.save(bookedBy=self.request.user)
                     slot.isBooked = True
                     slot.save()
                     return Response({'msg': 'Successfully booked slot.'},

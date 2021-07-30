@@ -35,7 +35,7 @@ class Bookings(models.Model):
     patientName = models.CharField(max_length=100, blank=False, null=False)
     bearerName = models.CharField(max_length=100, blank=False, null=False)
     patientAge = models.IntegerField(null=False, blank=False)
-    mobile = models.IntegerField(null=False, blank=False)
+    mobile = models.BigIntegerField(null=False, blank=False)
     description = models.TextField(blank=True, null=True)
     bookingTime = models.DateTimeField(auto_now_add=True)
     isCompleted = models.BooleanField(default=False)
