@@ -43,13 +43,7 @@ class BookingView(APIView):
     ]
 
     def get(self, request, *args, **kwargs):
-        user = self.request.user
-
-        if user.is_staff:
-            bookings = Bookings.objects.all()
-        else:
-            bookings = self.request.user.bookings.all()
-
+        bookings = self.request.user.bookings.all()
         serializer = BookingsSerializer(bookings, many=True)
         return Response(serializer.data)
 
@@ -78,6 +72,18 @@ class BookingView(APIView):
         else:
             return Response({'msg': 'This slot is not available for booking yet.'},
             status=status.HTTP_400_BAD_REQUEST)
+
+
+# Admin get all bookings
+class AdminBookingView(APIView):
+    permission_classes = [
+        IsAdminUser
+    ]
+
+    def get(self, request, *args, **kwargs):
+        bookings = Bookings.objects.all()
+        serializer = BookingsSerializer(bookings, many=True)
+        return Response(serializer.data)
 
 
 # activate slot
